@@ -18,7 +18,7 @@ public class Producer implements Runnable {
 			simpleBuffer.add("Foo");
 			fillCount.release();
 		} catch (Exception e) {
-			
+			// TODO: fix this code smell
 		}
 	}
 }
