@@ -1,6 +1,6 @@
 import java.util.concurrent.Semaphore;
 
-public class Producer {
+public class Producer implements Runnable {
 
 	Semaphore emptyCount;
 	Semaphore fillCount;
@@ -12,9 +12,13 @@ public class Producer {
 		this.simpleBuffer = simpleBuffer;
 	}
 
-	public void start() throws Exception {
-		emptyCount.acquire();
-		simpleBuffer.add("Foo");
-		fillCount.release();
+	public void run() {
+		try {
+			emptyCount.acquire();
+			simpleBuffer.add("Foo");
+			fillCount.release();
+		} catch (Exception e) {
+			
+		}
 	}
 }

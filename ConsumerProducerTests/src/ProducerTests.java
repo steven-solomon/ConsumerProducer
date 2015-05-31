@@ -20,7 +20,7 @@ public class ProducerTests {
 		mockSimpleBuffer = mock(SimpleBuffer.class);
 		producer = new Producer(mockEmptyCount, mockFillCount, mockSimpleBuffer);
 		
-		producer.start();
+		producer.run();
 	}
 		
 	@Test
