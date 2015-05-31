@@ -39,7 +39,7 @@ public class ProducerTests {
 	}
 	
 	@Test
-	public void invoke_al() throws Exception {
+	public void invoke_steps_in_order() throws Exception {
 		// Sadly it's impossible to remove this duplication
 		InOrder inOrder = inOrder(mockEmptyCount, mockSimpleBuffer, mockFillCount);
 		inOrder.verify(mockEmptyCount).acquire();
