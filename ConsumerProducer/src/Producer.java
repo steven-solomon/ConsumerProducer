@@ -14,16 +14,23 @@ public class Producer implements Runnable {
 	}
 
 	public void run() {
-		
 		try {
 			emptyCount.acquire();
-			if (isRunning) {
-				simpleBuffer.add("Foo");
-				fillCount.release();
-			}
+			if (isRunning)
+				produceItem();
 		} catch (Exception e) {
-			// TODO: fix this code smell
+			outputError(e);
 		}
+	}
+
+	private void produceItem() {
+		simpleBuffer.add("Foo");
+		fillCount.release();
+	}
+
+	private void outputError(Exception e) {
+		System.err.println(e.getMessage());
+		System.err.println(e.getStackTrace());
 	}
 	
 	public void stopRunning() {
