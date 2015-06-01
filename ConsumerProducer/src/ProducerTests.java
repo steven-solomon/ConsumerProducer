@@ -9,9 +9,8 @@ import org.mockito.InOrder;
 public class ProducerTests {
 	
 	Producer producer;
-	Semaphore spiedEmptyCount;
+	Semaphore mockEmptyCount;
 	Semaphore mockFillCount;
-	Semaphore emptyCount;
 	SimpleBuffer mockSimpleBuffer;
 	Thread producerThread;
 	
@@ -28,19 +27,18 @@ public class ProducerTests {
 	}
 
 	private void makeProducer() {
-		emptyCount = new Semaphore(1);
-		spiedEmptyCount = spy(emptyCount);
+		mockEmptyCount = mock(Semaphore.class);
 		mockFillCount = mock(Semaphore.class);
 		mockSimpleBuffer = mock(SimpleBuffer.class);
-		producer = new Producer(spiedEmptyCount, mockFillCount, mockSimpleBuffer);
+		producer = new Producer(mockEmptyCount, mockFillCount, mockSimpleBuffer);
 	}
 		
 	@Test
 	public void aquires_permit_for_an_empty_element() throws Exception {	
-		emptyCount.release();
+		mockEmptyCount.release();
 		stopThread();
 		
-		verify(spiedEmptyCount).acquire();
+		verify(mockEmptyCount).acquire();
 	}
 	
 	private void stopThread() throws InterruptedException {
@@ -50,7 +48,7 @@ public class ProducerTests {
 	
 	@Test
 	public void releases_permit_for_a_filled_element() throws Exception {
-		emptyCount.release();
+		mockEmptyCount.release();
 		stopThread();
 		
 		verify(mockFillCount).release();
@@ -58,7 +56,7 @@ public class ProducerTests {
 	
 	@Test
 	public void adds_element_to_buffer() throws Exception {
-		emptyCount.release();
+		mockEmptyCount.release();
 		stopThread();
 		
 		verify(mockSimpleBuffer).add(anyString());
@@ -66,12 +64,12 @@ public class ProducerTests {
 	
 	@Test
 	public void invokes_steps_in_order() throws Exception {
-		emptyCount.release();
+		mockEmptyCount.release();
 		stopThread();
 		
 		// Sadly it's impossible to remove this duplication
-		InOrder inOrder = inOrder(spiedEmptyCount, mockSimpleBuffer, mockFillCount);
-		inOrder.verify(spiedEmptyCount).acquire();
+		InOrder inOrder = inOrder(mockEmptyCount, mockSimpleBuffer, mockFillCount);
+		inOrder.verify(mockEmptyCount).acquire();
 		inOrder.verify(mockSimpleBuffer).add(anyString());
 		inOrder.verify(mockFillCount).release();	
 	}
@@ -85,7 +83,7 @@ public class ProducerTests {
 	
 	private void stopBeforeEmptyCountReleased() throws InterruptedException {
 		producer.stopRunning();		
-		emptyCount.release();
+		mockEmptyCount.release();
 		producerThread.join();
 	}
 	
