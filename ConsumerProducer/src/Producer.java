@@ -16,11 +16,8 @@ public class Producer implements Runnable {
 	public void run() {
 		
 		try {
-			System.out.println("Waiting");
 			emptyCount.acquire();
-			System.out.println("Back in control");
 			if (isRunning) {
-				System.out.println("Producing");
 				simpleBuffer.add("Foo");
 				fillCount.release();
 			}
@@ -30,7 +27,6 @@ public class Producer implements Runnable {
 	}
 	
 	public void stopRunning() {
-		System.out.println("Stopping");
 		isRunning = false;
 	}
 }
