@@ -11,16 +11,18 @@ public class ProducerTests {
 	Producer producer;
 	Semaphore mockEmptyCount;
 	Semaphore mockFillCount;
+	Semaphore semaphore;
 	SimpleBuffer mockSimpleBuffer;
 	
 	@Before
 	public void setUp() throws Exception {
-		mockEmptyCount = mock(Semaphore.class);
+		semaphore = new Semaphore(1);
+		mockEmptyCount = spy(semaphore);
 		mockFillCount = mock(Semaphore.class);
 		mockSimpleBuffer = mock(SimpleBuffer.class);
 		producer = new Producer(mockEmptyCount, mockFillCount, mockSimpleBuffer);
 		
-		producer.run();
+		producer.run();		
 	}
 		
 	@Test
@@ -39,11 +41,27 @@ public class ProducerTests {
 	}
 	
 	@Test
-	public void invoke_steps_in_order() throws Exception {
+	public void invokes_steps_in_order() throws Exception {
 		// Sadly it's impossible to remove this duplication
 		InOrder inOrder = inOrder(mockEmptyCount, mockSimpleBuffer, mockFillCount);
 		inOrder.verify(mockEmptyCount).acquire();
 		inOrder.verify(mockSimpleBuffer).add(anyString());
 		inOrder.verify(mockFillCount).release();	
+	}
+	
+	@Test 
+	public void does_not_add_to_buffer_when_it_is_stopped() throws InterruptedException {
+		mockFillCount = mock(Semaphore.class);
+		mockSimpleBuffer = mock(SimpleBuffer.class);
+		producer = new Producer(mockEmptyCount, mockFillCount, mockSimpleBuffer);
+				
+		Thread thread = new Thread(producer);
+		thread.start();
+		producer.stopRunning();		
+		semaphore.release();
+		thread.join();
+		
+		verify(mockSimpleBuffer, never()).add(anyString());
+		verify(mockFillCount, never()).release();			
 	}
 }
