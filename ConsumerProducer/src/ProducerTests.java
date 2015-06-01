@@ -86,7 +86,7 @@ public class ProducerTests {
 	
 	private void stopBeforeEmptyCountReleased() throws InterruptedException {
 		producer.stopRunning();		
-		releaseEmptyCount();
+		mockEmptyCount.release();
 		producerThread.join();
 	}
 	

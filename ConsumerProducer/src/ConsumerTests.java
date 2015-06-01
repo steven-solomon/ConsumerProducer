@@ -1,12 +1,9 @@
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.concurrent.Semaphore;
 
 import org.junit.Before;
 import org.junit.Test;
-
 
 public class ConsumerTests {
 	
@@ -19,8 +16,6 @@ public class ConsumerTests {
 	public void setUp() throws Exception {
 		makeConsumer();
 		startConsumerThread();
-		releaseFillCount();
-		stopConsumerThread();	
 	}
 
 	private void makeConsumer() {
@@ -45,11 +40,17 @@ public class ConsumerTests {
 
 	@Test
 	public void acquires_permit_for_filled_element() throws Exception {	
+		releaseFillCount();
+		stopConsumerThread();
+		
 		verify(mockFillCount).acquire();		
 	}
 	
 	@Test
 	public void removes_item_from_buffer() throws Exception {		
+		releaseFillCount();
+		stopConsumerThread();
+		
 		verify(simpleBuffer).remove();		
 	}
 }
