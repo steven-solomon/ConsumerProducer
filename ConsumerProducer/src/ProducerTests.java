@@ -17,7 +17,6 @@ public class ProducerTests {
 	@Before
 	public void setUp() throws Exception {
 		makeProducer();
-		
 		startThread();
 	}
 
@@ -35,10 +34,14 @@ public class ProducerTests {
 		
 	@Test
 	public void aquires_permit_for_an_empty_element() throws Exception {	
-		mockEmptyCount.release();
+		releaseEmptyCount();
 		stopThread();
 		
 		verify(mockEmptyCount).acquire();
+	}
+
+	private void releaseEmptyCount() {
+		mockEmptyCount.release();
 	}
 	
 	private void stopThread() throws InterruptedException {
@@ -48,7 +51,7 @@ public class ProducerTests {
 	
 	@Test
 	public void releases_permit_for_a_filled_element() throws Exception {
-		mockEmptyCount.release();
+		releaseEmptyCount();
 		stopThread();
 		
 		verify(mockFillCount).release();
@@ -56,7 +59,7 @@ public class ProducerTests {
 	
 	@Test
 	public void adds_element_to_buffer() throws Exception {
-		mockEmptyCount.release();
+		releaseEmptyCount();
 		stopThread();
 		
 		verify(mockSimpleBuffer).add(anyString());
@@ -64,7 +67,7 @@ public class ProducerTests {
 	
 	@Test
 	public void invokes_steps_in_order() throws Exception {
-		mockEmptyCount.release();
+		releaseEmptyCount();
 		stopThread();
 		
 		// Sadly it's impossible to remove this duplication
@@ -83,7 +86,7 @@ public class ProducerTests {
 	
 	private void stopBeforeEmptyCountReleased() throws InterruptedException {
 		producer.stopRunning();		
-		mockEmptyCount.release();
+		releaseEmptyCount();
 		producerThread.join();
 	}
 	

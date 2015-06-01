@@ -5,4 +5,8 @@ public class SimpleBuffer {
 		
 	}
 
+	public String remove() {
+		return null;
+	}
+
 }
